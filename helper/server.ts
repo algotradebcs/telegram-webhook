@@ -23,6 +23,18 @@ export default <C extends Context>(
     const request: Request = fetchEvent.request;
 
     try {
+      if (request.method === "GET" || request.method === "HEAD") {
+        await fetchEvent.respondWith(new Response("ok", { status: 200 }));
+        return;
+      }
+
+      if (request.method !== "POST") {
+        await fetchEvent.respondWith(
+          json({ error: "Method not allowed" }, 405),
+        );
+        return;
+      }
+
       const { event, signature } = parseHeaders(request.headers);
 
       const payload = await fetchPayload(request);
