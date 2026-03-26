@@ -16,23 +16,16 @@ export default <C extends Context>(
 ) => {
   console.log("Resolving the request");
 
-  // deno-lint-ignore no-explicit-any
-  return async (fetchEvent: any) => {
+  return async (request: Request): Promise<Response> => {
     const startTime = Date.now();
-
-    const request: Request = fetchEvent.request;
 
     try {
       if (request.method === "GET" || request.method === "HEAD") {
-        await fetchEvent.respondWith(new Response("ok", { status: 200 }));
-        return;
+        return new Response("ok", { status: 200 });
       }
 
       if (request.method !== "POST") {
-        await fetchEvent.respondWith(
-          json({ error: "Method not allowed" }, 405),
-        );
-        return;
+        return json({ error: "Method not allowed" }, 405);
       }
 
       const { event, signature } = parseHeaders(request.headers);
@@ -73,14 +66,14 @@ export default <C extends Context>(
         context = await handler(event, payload, context) || context;
       }
 
-      await fetchEvent.respondWith(json({ success: true }));
+      return json({ success: true });
     } catch (error) {
-      await fetchEvent.respondWith(
-        json({ error }),
+      return json(
+        { error: error instanceof Error ? error.message : String(error) },
         error.status || error.statusCode || error.code || 500,
       );
+    } finally {
+      console.log(`Done in ${Date.now() - startTime}ms`);
     }
-
-    console.log(`Done in ${Date.now() - startTime}ms`);
   };
 };

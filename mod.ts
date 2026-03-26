@@ -10,7 +10,7 @@ export function webhooks<C extends Context = Context>(config: Config = {}) {
   console.log("Listening to the request");
 
   return (...eventHandlers: ReadonlyArray<EventHandler<C>>) => {
-    addEventListener("fetch", server<C>(config, eventHandlers));
+    Deno.serve(server<C>(config, eventHandlers));
   };
 }
 
