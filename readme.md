@@ -28,10 +28,11 @@ https://docs.github.com/en/developers/webhooks-and-events/webhooks/webhook-event
    1. Select the forked project
    2. Select the main branch (or your custom one)
    3. Name your project
-   4. Add 2 environment variables:
+   4. Add environment variables:
       1. Key: TOKEN, Value: **(your custom telegram bot key from [botfather](https://t.me/botfather))**
       2. Key: WEBHOOK, Value: **(your custom telegram channel/group id see [here](https://gist.github.com/mraaroncruz/e76d19f7d61d59419002db54030ebe35))**
-      3. Key: WEBHOOK_SECRET, Value: **(random generated string that can contain anything)**
+      3. Key: WEBHOOK_THREAD_ID, Value: **(optional Telegram topic id for forum-enabled groups)**
+      4. Key: WEBHOOK_SECRET, Value: **(random generated string that can contain anything)**
 4. Go to [dashboard](https://dash.deno.com/projects/) and select a newly created project
 5. Copy deploy domain which does not contain random id
    1. ✅ your-project-name.deno.dev

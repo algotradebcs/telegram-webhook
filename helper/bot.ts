@@ -5,6 +5,7 @@ const env = Deno.env.toObject();
 export class Bot {
   private _channels: (string | number)[] = [];
   private _instance: Grammy;
+  private _messageThreadId?: number;
 
   constructor(token: string = env["TOKEN"], channel: string = "") {
     if (!token) {
@@ -20,6 +21,10 @@ export class Bot {
     if (env["WEBHOOK"]) {
       this._channels.push(env["WEBHOOK"]!);
     }
+
+    if (env["WEBHOOK_THREAD_ID"]) {
+      this._messageThreadId = Number(env["WEBHOOK_THREAD_ID"]);
+    }
   }
 
   public addChannel(channel: string | number) {
@@ -34,13 +39,16 @@ export class Bot {
    * @returns void
    */
   public async send(channel: string | number, message: string, link?: string) {
+    const options = {
+      parse_mode: "HTML" as const,
+      message_thread_id: this._messageThreadId,
+    };
+
     if (!link) {
-      return await this._instance.api.sendMessage(channel, message, {
-        parse_mode: "HTML",
-      });
+      return await this._instance.api.sendMessage(channel, message, options);
     } else {
       return await this._instance.api.sendMessage(channel, message, {
-        parse_mode: "HTML",
+        ...options,
         reply_markup: new InlineKeyboard().url("View it on GitHub", link),
       });
     }
